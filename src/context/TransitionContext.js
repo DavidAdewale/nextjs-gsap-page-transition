@@ -1,23 +1,27 @@
-import React, { useState, createContext } from "react"
-import gsap from "gsap"
+import React, { useState, createContext, useContext } from 'react';
+import gsap from 'gsap';
 
-const TransitionContext = createContext({})
+const TransitionContext = createContext({});
 
-const TransitionProvider = ({ children }) => {
-  const [timeline, setTimeline] = useState(() =>
-    gsap.timeline({ paused: true })
-  )
+function TransitionProvider({ children }) {
+  const [timeline, setTimeline] = useState(() => {
+    return gsap.timeline({ paused: true });
+  });
 
   return (
-    <TransitionContext.Provider
-      value={{
-        timeline,
-        setTimeline,
-      }}
-    >
+    <TransitionContext.Provider value={{ timeline, setTimeline }}>
       {children}
     </TransitionContext.Provider>
-  )
+  );
 }
 
-export { TransitionContext, TransitionProvider }
+function useTransitionContext() {
+  const context = useContext(TransitionContext);
+  if (context === undefined) {
+    throw new Error('useTransition must be used within a TransitionProvider');
+  }
+
+  return context;
+}
+
+export { useTransitionContext, TransitionProvider };
